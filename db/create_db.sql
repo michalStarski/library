@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS books_locations CASCADE;
 DROP TABLE IF EXISTS collections CASCADE;
 DROP TABLE IF EXISTS ownership CASCADE;
 */
+--DROP DATABASE library;
+--CREATE DATABASE library;
 --Define tables
 CREATE TABLE books (
     book_id SERIAL PRIMARY KEY,
@@ -79,3 +81,18 @@ INSERT
     OR
 UPDATE
     ON books_locations EXECUTE PROCEDURE collection_size_t();
+--VIEW FOR DETAILED INFO ON BOOKS
+    CREATE
+    OR REPLACE VIEW books_detailed AS
+SELECT
+    b.title,
+    a.name,
+    a.surname,
+    b.publish_date,
+    c.col_id
+FROM
+    books b
+    JOIN ownership o on b.book_id = o.book
+    JOIN authors a on o.author = a.author_id
+    JOIN books_locations bl on bl.book = b.book_id
+    JOIN collections c on c.col_id = bl.collection;
